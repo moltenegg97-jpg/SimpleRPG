@@ -66,17 +66,17 @@ def character_movment():
         collision_x2 += dx
         collision_y1 += dy
         collision_y2 += dy
-        list_of_overlaps = list((canvas.find_overlapping(collision_x1, collision_y1, collision_x2, collision_y2)))
-        print(f'кортеж: {canvas.find_overlapping(collision_x1, collision_y1, collision_x2, collision_y2)}')
+        overlaps_id = (canvas.find_overlapping(collision_x1, collision_y1, collision_x2, collision_y2))
         list_of_overlasps_tags = []
-        for i in range(len(list_of_overlaps)):
-            list_of_overlasps_tags.append(canvas.gettags(list_of_overlaps[i]))
+        print(overlaps_id)
+        for i in overlaps_id:
+            list_of_overlasps_tags.append(canvas.gettags(i)[0])
         print(collision_x1, collision_y1, collision_x2, collision_y2)
         print(canvas.bbox(character))
         print(list_of_overlasps_tags)
-        if ('wall',) not in list_of_overlasps_tags:
+        if 'wall' not in list_of_overlasps_tags:
             canvas.move(character, dx, dy)
-        if ('wall',) in list_of_overlasps_tags:
+        if 'wall' in list_of_overlasps_tags:
             print('найдено пересечание')
     
     # Повторяем каждые 16 мс (~60 кадров в секунду)
