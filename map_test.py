@@ -44,8 +44,7 @@ keys_pressed = {
     'a': False, 
     's': False,
     'd': False,
-    'u': False,
-    'i': False
+    'm': False
 }
 game_states = {
     'map': True,
@@ -57,6 +56,7 @@ def key_pressed(event):
     if event.keysym in keys_pressed:
         keys_pressed[event.keysym] = True
 
+
 def key_released(event):
     if event.keysym in keys_pressed:
         keys_pressed[event.keysym] = False
@@ -67,30 +67,55 @@ def can_move(list_of_overlaps):
             return False
     if 'enemy' in list_of_overlaps:
             print('найдено пересечание')
+            to_battle_state()
             map_canvas.delete(list_of_overlaps['enemy'][0])
             # map_canvas.delete('enemy')
             return False
     return True
 
 def to_battle_state():
-    if keys_pressed['u']:
-        map_canvas.pack_forget()
-        battle_canvas.pack()
-        game_states['map'] = False
-        game_states['battle'] = True
-    main_window.after(16, to_battle_state)
+    map_canvas.pack_forget()
+    battle_canvas.pack()
+    game_states['map'] = False
+    game_states['battle'] = True
+    #main_window.after(16, to_battle_state)
+
+def key_for_map_state():
+    if keys_pressed['m']:
+        to_map_state()
+    main_window.after(16, key_for_map_state)
 
 def to_map_state():
-    if keys_pressed['i']:
+    
         battle_canvas.pack_forget()
         map_canvas.pack()
         game_states['battle'] = False
         game_states['map'] = True
-    main_window.after(16, to_map_state)
+        
+    
 
-
+def check_for_overlaps(collision_x1, collision_y1, collision_x2, collision_y2):
+    overlaps_id = (map_canvas.find_overlapping(collision_x1, collision_y1, collision_x2, collision_y2))
+    list_of_overlaps_tags = {}
+    print(overlaps_id)
+        
+    for i in overlaps_id:
+            
+        #list_of_overlasps_tags.append(map_canvas.gettags(i)[0])
+        if map_canvas.gettags(i)[0] in list_of_overlaps_tags:
+            print('такой тег был')
+            print(list_of_overlaps_tags[map_canvas.gettags(i)[0]])
+            list_of_overlaps_tags[map_canvas.gettags(i)[0]].append(i)
+        else:
+            list_of_overlaps_tags[map_canvas.gettags(i)[0]] = [i]
+        
+            #print(collision_x1, collision_y1, collision_x2, collision_y2)
+            print(map_canvas.bbox(character))
+            print(list_of_overlaps_tags)
+    return list_of_overlaps_tags
 # Функция, которая периодически проверяет состояние клавиш и двигает персонажа
 def character_movment():
+    
     if game_states['map'] == True:
         dx, dy = 0, 0
     
@@ -109,25 +134,10 @@ def character_movment():
             collision_x2 += dx
             collision_y1 += dy
             collision_y2 += dy
-            overlaps_id = (map_canvas.find_overlapping(collision_x1, collision_y1, collision_x2, collision_y2))
-            list_of_overlasps_tags = {}
-            print(overlaps_id)
+            list_of_overlaps_tags = check_for_overlaps(collision_x1, collision_y1, collision_x2, collision_y2)
+           
         
-            for i in overlaps_id:
-            
-                #list_of_overlasps_tags.append(map_canvas.gettags(i)[0])
-                if map_canvas.gettags(i)[0] in list_of_overlasps_tags:
-                    print('такой тег был')
-                    print(list_of_overlasps_tags[map_canvas.gettags(i)[0]])
-                    list_of_overlasps_tags[map_canvas.gettags(i)[0]].append(i)
-                else:
-                    list_of_overlasps_tags[map_canvas.gettags(i)[0]] = [i]
-        
-            #print(collision_x1, collision_y1, collision_x2, collision_y2)
-            print(map_canvas.bbox(character))
-            print(list_of_overlasps_tags)
-        
-            if can_move(list_of_overlasps_tags) == True:
+            if can_move(list_of_overlaps_tags) == True:
                 map_canvas.move(character, dx, dy)
             # if 'wall' in list_of_overlasps_tags:
             #     print('найдено пересечание')
@@ -135,10 +145,9 @@ def character_movment():
             #     print('найдено пересечание')
     
         # Повторяем каждые 16 мс (~60 кадров в секунду)
-        main_window.after(16, character_movment)
+    main_window.after(16, character_movment)
 character_movment()
-to_battle_state()
-to_map_state()
+key_for_map_state()
 # Привязываем обработчики событий
 main_window.bind("<KeyPress>", key_pressed)
 main_window.bind("<KeyRelease>", key_released)
