@@ -36,8 +36,47 @@ character = map_canvas.create_oval(playerY, playerX, playerY+8, playerX+8, fill 
 goblin1 = map_canvas.create_oval(40, 100, 48, 108, fill='red', outline='black', tags='enemy')
 goblin2 = map_canvas.create_oval(70, 80, 78, 88, fill='red', outline='black', tags='enemy')
 
-battle_canvas.create_rectangle(50, 50, 60, 60, fill = 'yellow', outline='black')
-battle_canvas.create_rectangle(90, 50, 100, 60, fill = 'red', outline='black')
+player_battle_icon_x = 50
+player_battle_icon_y = 50
+player_battle_icon_width = 80
+player_battle_icon_hight = 100
+
+enemy_battle_icon_x = 200
+enemy_battle_icon_y = 50
+enemy_battle_icon_width = 80
+enemy_battle_icon_hight = 100
+
+player_battle_icon = battle_canvas.create_rectangle(player_battle_icon_x, player_battle_icon_y, player_battle_icon_x+player_battle_icon_width, player_battle_icon_y+player_battle_icon_hight, fill = 'yellow', outline='black')
+enemy_battle_icon = battle_canvas.create_rectangle(enemy_battle_icon_x, enemy_battle_icon_y, enemy_battle_icon_x+enemy_battle_icon_width, enemy_battle_icon_y+enemy_battle_icon_hight, fill = 'red', outline='black')
+
+class action_text:
+    def __init__(self, disposition_x, disposition_y, text):
+        self.text_width = 40 
+        self.text_x = 50+ disposition_x 
+        self.text_y = 200 + disposition_y
+        self.text_bar_size = 14
+        self.text = text
+        battle_canvas.create_rectangle(self.text_x-5, self.text_y, self.text_x+self.text_width+5, self.text_y+self.text_bar_size, fill = 'white', outline='black')
+        battle_canvas.create_text(self.text_x, self.text_y, text=self.text, width=self.text_width, anchor='nw')
+
+attack_text = action_text(0, 0, 'attack')
+block_text = action_text(0, 30, 'block')
+# text_width = 40
+# text_x = 50
+# text_y = 200
+# text_bar_size = 14
+# text_bar = battle_canvas.create_rectangle(text_x-5, text_y, text_x+text_width+5, text_y+text_bar_size, fill = 'white', outline='black')
+# attack_text = battle_canvas.create_text(text_x, text_y, text='attack', width=text_width, anchor='nw')
+
+# block_bar = battle_canvas.create_rectangle(text_x-5, text_y, text_x+text_width+5, text_y+text_bar_size, fill = 'white', outline='black')
+# block_text = battle_canvas.create_text(text_x, text_y, text='attack', width=text_width, anchor='nw')
+
+cursor_diametr = 5
+cursor_x = attack_text.text_x + attack_text.text_width + 10
+cursor_y = attack_text.text_y + attack_text.text_bar_size/2 - cursor_diametr/2
+# cursor_x = text_x + text_width + 10
+# cursor_y = text_y + text_bar_size/2 - cursor_diametr/2
+cursor = battle_canvas.create_oval(cursor_x, cursor_y, cursor_x+cursor_diametr, cursor_y+cursor_diametr, fill = 'black', outline='black', tags='cursor')
 
 keys_pressed = {
     'w': False,
