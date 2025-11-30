@@ -31,12 +31,16 @@ playerY = 30
 playerX = 30
 character = canvas.create_oval(playerY, playerX, playerY+8, playerX+8, fill = 'yellow', outline='black', tags='character')
 
+goblin1 = canvas.create_oval(40, 100, 48, 108, fill='red', outline='black', tags='enemy')
+goblin2 = canvas.create_oval(70, 80, 78, 88, fill='red', outline='black', tags='enemy')
+
 keys_pressed = {
     'w': False,
     'a': False, 
     's': False,
     'd': False
 }
+
 
 
 def key_pressed(event):
@@ -47,6 +51,16 @@ def key_released(event):
     if event.keysym in keys_pressed:
         keys_pressed[event.keysym] = False
 
+def can_move(list_of_overlaps):
+    if 'wall' in list_of_overlaps:
+            print('найдено пересечание')
+            return False
+    if 'enemy' in list_of_overlaps:
+            print('найдено пересечание')
+            canvas.delete(list_of_overlaps['enemy'][0])
+            # canvas.delete('enemy')
+            return False
+    return True
 # Функция, которая периодически проверяет состояние клавиш и двигает персонажа
 def character_movment():
     dx, dy = 0, 0
@@ -67,17 +81,29 @@ def character_movment():
         collision_y1 += dy
         collision_y2 += dy
         overlaps_id = (canvas.find_overlapping(collision_x1, collision_y1, collision_x2, collision_y2))
-        list_of_overlasps_tags = []
+        list_of_overlasps_tags = {}
         print(overlaps_id)
+        
         for i in overlaps_id:
-            list_of_overlasps_tags.append(canvas.gettags(i)[0])
-        print(collision_x1, collision_y1, collision_x2, collision_y2)
+            
+            #list_of_overlasps_tags.append(canvas.gettags(i)[0])
+            if canvas.gettags(i)[0] in list_of_overlasps_tags:
+                print('такой тег был')
+                print(list_of_overlasps_tags[canvas.gettags(i)[0]])
+                list_of_overlasps_tags[canvas.gettags(i)[0]].append(i)
+            else:
+                list_of_overlasps_tags[canvas.gettags(i)[0]] = [i]
+        
+        #print(collision_x1, collision_y1, collision_x2, collision_y2)
         print(canvas.bbox(character))
         print(list_of_overlasps_tags)
-        if 'wall' not in list_of_overlasps_tags:
+        
+        if can_move(list_of_overlasps_tags) == True:
             canvas.move(character, dx, dy)
-        if 'wall' in list_of_overlasps_tags:
-            print('найдено пересечание')
+        # if 'wall' in list_of_overlasps_tags:
+        #     print('найдено пересечание')
+        # if 'enemy' in list_of_overlasps_tags:
+        #     print('найдено пересечание')
     
     # Повторяем каждые 16 мс (~60 кадров в секунду)
     main_window.after(16, character_movment)
