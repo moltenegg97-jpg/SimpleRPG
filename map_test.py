@@ -67,30 +67,51 @@ def can_move(list_of_overlaps):
             return False
     if 'enemy' in list_of_overlaps:
             print('найдено пересечание')
+            to_battle_state()
             map_canvas.delete(list_of_overlaps['enemy'][0])
             # map_canvas.delete('enemy')
             return False
     return True
 
 def to_battle_state():
-    if keys_pressed['u']:
-        map_canvas.pack_forget()
-        battle_canvas.pack()
-        game_states['map'] = False
-        game_states['battle'] = True
+    map_canvas.pack_forget()
+    battle_canvas.pack()
+    game_states['map'] = False
+    game_states['battle'] = True
     main_window.after(16, to_battle_state)
 
 def to_map_state():
     if keys_pressed['i']:
         battle_canvas.pack_forget()
         map_canvas.pack()
+        check_for_overlap = True
+        print(check_for_overlap)
         game_states['battle'] = False
         game_states['map'] = True
     main_window.after(16, to_map_state)
 
-
+def check_for_overlaps(collision_x1, collision_y1, collision_x2, collision_y2):
+    overlaps_id = (map_canvas.find_overlapping(collision_x1, collision_y1, collision_x2, collision_y2))
+    list_of_overlasps_tags = {}
+    print(overlaps_id)
+        
+    for i in overlaps_id:
+            
+        #list_of_overlasps_tags.append(map_canvas.gettags(i)[0])
+        if map_canvas.gettags(i)[0] in list_of_overlasps_tags:
+            print('такой тег был')
+            print(list_of_overlasps_tags[map_canvas.gettags(i)[0]])
+            list_of_overlasps_tags[map_canvas.gettags(i)[0]].append(i)
+        else:
+            list_of_overlasps_tags[map_canvas.gettags(i)[0]] = [i]
+        
+            #print(collision_x1, collision_y1, collision_x2, collision_y2)
+            print(map_canvas.bbox(character))
+            print(list_of_overlasps_tags)
+    return list_of_overlasps_tags
 # Функция, которая периодически проверяет состояние клавиш и двигает персонажа
 def character_movment():
+    
     if game_states['map'] == True:
         dx, dy = 0, 0
     
@@ -109,23 +130,8 @@ def character_movment():
             collision_x2 += dx
             collision_y1 += dy
             collision_y2 += dy
-            overlaps_id = (map_canvas.find_overlapping(collision_x1, collision_y1, collision_x2, collision_y2))
-            list_of_overlasps_tags = {}
-            print(overlaps_id)
-        
-            for i in overlaps_id:
-            
-                #list_of_overlasps_tags.append(map_canvas.gettags(i)[0])
-                if map_canvas.gettags(i)[0] in list_of_overlasps_tags:
-                    print('такой тег был')
-                    print(list_of_overlasps_tags[map_canvas.gettags(i)[0]])
-                    list_of_overlasps_tags[map_canvas.gettags(i)[0]].append(i)
-                else:
-                    list_of_overlasps_tags[map_canvas.gettags(i)[0]] = [i]
-        
-            #print(collision_x1, collision_y1, collision_x2, collision_y2)
-            print(map_canvas.bbox(character))
-            print(list_of_overlasps_tags)
+            check_for_overlaps(collision_x1, collision_y1, collision_x2, collision_y2)
+           
         
             if can_move(list_of_overlasps_tags) == True:
                 map_canvas.move(character, dx, dy)
@@ -137,7 +143,7 @@ def character_movment():
         # Повторяем каждые 16 мс (~60 кадров в секунду)
         main_window.after(16, character_movment)
 character_movment()
-to_battle_state()
+#to_battle_state()
 to_map_state()
 # Привязываем обработчики событий
 main_window.bind("<KeyPress>", key_pressed)
