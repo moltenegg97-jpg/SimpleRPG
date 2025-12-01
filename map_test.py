@@ -61,21 +61,11 @@ class action_text:
 
 attack_text = action_text(0, 0, 'attack')
 block_text = action_text(0, 30, 'block')
-# text_width = 40
-# text_x = 50
-# text_y = 200
-# text_bar_size = 14
-# text_bar = battle_canvas.create_rectangle(text_x-5, text_y, text_x+text_width+5, text_y+text_bar_size, fill = 'white', outline='black')
-# attack_text = battle_canvas.create_text(text_x, text_y, text='attack', width=text_width, anchor='nw')
-
-# block_bar = battle_canvas.create_rectangle(text_x-5, text_y, text_x+text_width+5, text_y+text_bar_size, fill = 'white', outline='black')
-# block_text = battle_canvas.create_text(text_x, text_y, text='attack', width=text_width, anchor='nw')
 
 cursor_diametr = 5
 cursor_x = attack_text.text_x + attack_text.text_width + 10
 cursor_y = attack_text.text_y + attack_text.text_bar_size/2 - cursor_diametr/2
-# cursor_x = text_x + text_width + 10
-# cursor_y = text_y + text_bar_size/2 - cursor_diametr/2
+
 cursor = battle_canvas.create_oval(cursor_x, cursor_y, cursor_x+cursor_diametr, cursor_y+cursor_diametr, fill = 'black', outline='black', tags='cursor')
 
 keys_pressed = {
@@ -83,7 +73,8 @@ keys_pressed = {
     'a': False, 
     's': False,
     'd': False,
-    'm': False
+    'm': False,
+    'y': False
 }
 game_states = {
     'map': True,
@@ -153,7 +144,7 @@ def check_for_overlaps(collision_x1, collision_y1, collision_x2, collision_y2):
             print(list_of_overlaps_tags)
     return list_of_overlaps_tags
 # Функция, которая периодически проверяет состояние клавиш и двигает персонажа
-def character_movment():
+def character_movement():
     
     if game_states['map'] == True:
         dx, dy = 0, 0
@@ -184,9 +175,39 @@ def character_movment():
             #     print('найдено пересечание')
     
         # Повторяем каждые 16 мс (~60 кадров в секунду)
-    main_window.after(16, character_movment)
-character_movment()
+    main_window.after(16, character_movement)
+
+def make_choice():
+    if battle_canvas.coords(cursor)[1] == 234.5:
+        print('block')
+    if battle_canvas.coords(cursor)[1] == 204.5:
+        print('attack')
+
+def cursor_movement():
+    rate_of_update = 6
+    if game_states['battle'] == True:
+        dx = 0
+        dy = 0
+        if keys_pressed['w'] and battle_canvas.coords(cursor)[1] > 205:
+            dy -= 30
+        if keys_pressed['s'] and battle_canvas.coords(cursor)[1] < 234:
+            dy += 30
+        #print(battle_canvas.coords(cursor))
+        battle_canvas.move(cursor, dx, dy)
+    main_window.after(16*rate_of_update, cursor_movement)
+
+def press_enter():
+    if game_states['battle'] == True:
+        if keys_pressed['y'] == True:
+            #print('enter is pressed')
+            make_choice()
+    main_window.after(16, press_enter)
+
+character_movement()
 key_for_map_state()
+cursor_movement()
+press_enter()
+
 # Привязываем обработчики событий
 main_window.bind("<KeyPress>", key_pressed)
 main_window.bind("<KeyRelease>", key_released)
