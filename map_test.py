@@ -74,7 +74,7 @@ keys_pressed = {
     's': False,
     'd': False,
     'm': False,
-    'y': False
+    'Return': False
 }
 game_states = {
     'map': True,
@@ -198,8 +198,8 @@ def cursor_movement():
 
 def press_enter():
     if game_states['battle'] == True:
-        if keys_pressed['y'] == True:
-            #print('enter is pressed')
+        if keys_pressed['Return'] == True:
+            print('enter is pressed')
             make_choice()
     main_window.after(16, press_enter)
 
@@ -212,12 +212,5 @@ press_enter()
 main_window.bind("<KeyPress>", key_pressed)
 main_window.bind("<KeyRelease>", key_released)
 
-# print(map_canvas.bbox('character'))
-# x1, y1, x2, y2 = map_canvas.bbox('character')
-# print(map_canvas.find_overlapping(x1, y1, x2, y2))
-# list_of_overlaps = list(map_canvas.find_overlapping(x1, y1, x2, y2))
-
-# for i in range(len(list_of_overlaps)):
-#     print(map_canvas.gettags(list_of_overlaps[i]))
 
 main_window.mainloop()
