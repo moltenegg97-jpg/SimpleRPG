@@ -1,6 +1,7 @@
 import tkinter
+import battle_logic
 
-
+#матрица карты
 map_matrix = [
     [1, 1, 1, 1, 0, 1],
     [1, 0, 0, 1],
@@ -19,6 +20,7 @@ battle_canvas = tkinter.Canvas(main_window)
 # map_canvas.create_rectangle(50, 50, 70, 70, fill="blue", outline="black")
 # map_canvas.create_rectangle(200, 200, 220, 220, fill="green", outline="black")
 
+#отрисовываю карту
 for i in range(len(map_matrix)):
     for j in range(len(map_matrix[i])):
         if map_matrix[i][j] == 1:
@@ -28,7 +30,7 @@ for i in range(len(map_matrix)):
             color = 'green'
             layer = 'background'
         map_canvas.create_rectangle(j*tile_size, i*tile_size, j*tile_size+tile_size, i*tile_size+tile_size, fill=color, outline="black", tags=layer)
-
+#отрисовка персонажа
 playerY = 30
 playerX = 30
 character = map_canvas.create_oval(playerY, playerX, playerY+8, playerX+8, fill = 'yellow', outline='black', tags='character')
@@ -36,6 +38,7 @@ character = map_canvas.create_oval(playerY, playerX, playerY+8, playerX+8, fill 
 goblin1 = map_canvas.create_oval(40, 100, 48, 108, fill='red', outline='black', tags='enemy')
 goblin2 = map_canvas.create_oval(70, 80, 78, 88, fill='red', outline='black', tags='enemy')
 
+#отрисовка персонажей на экране боя
 player_battle_icon_x = 50
 player_battle_icon_y = 50
 player_battle_icon_width = 80
@@ -48,6 +51,25 @@ enemy_battle_icon_hight = 100
 
 player_battle_icon = battle_canvas.create_rectangle(player_battle_icon_x, player_battle_icon_y, player_battle_icon_x+player_battle_icon_width, player_battle_icon_y+player_battle_icon_hight, fill = 'yellow', outline='black')
 enemy_battle_icon = battle_canvas.create_rectangle(enemy_battle_icon_x, enemy_battle_icon_y, enemy_battle_icon_x+enemy_battle_icon_width, enemy_battle_icon_y+enemy_battle_icon_hight, fill = 'red', outline='black')
+
+#отрисовка полос здоровья
+player_battle_hp_x = player_battle_icon_x+10
+player_battle_hp_y = player_battle_icon_y+player_battle_icon_hight+20
+player_battle_hp_x1 = player_battle_icon_x+player_battle_icon_width-10
+player_battle_hp_y1 = player_battle_icon_y+player_battle_icon_hight+20+10
+player_battle_hp_x_din = player_battle_icon_x+(player_battle_icon_width-10)*battle_logic.PC.Hp/battle_logic.PC.HpMax
+
+player_battle_hp_bar_back = battle_canvas.create_rectangle(player_battle_hp_x, player_battle_hp_y, player_battle_hp_x1, player_battle_hp_y1, fill = 'red', outline='black')
+player_battle_hp_bar_back = battle_canvas.create_rectangle(player_battle_hp_x, player_battle_hp_y, player_battle_hp_x_din, player_battle_hp_y1, fill = 'green', outline='black')
+
+enemy_battle_hp_x = enemy_battle_icon_x+10
+enemy_battle_hp_y = enemy_battle_icon_y+enemy_battle_icon_hight+20
+enemy_battle_hp_x1 = enemy_battle_icon_x+enemy_battle_icon_width-10
+enemy_battle_hp_y1 = enemy_battle_icon_y+enemy_battle_icon_hight+20+10
+enemy_battle_hp_x_din = enemy_battle_icon_x+(enemy_battle_icon_width-10)*battle_logic.Goblin.Hp/battle_logic.Goblin.HpMax
+
+enemy_battle_hp_bar_back = battle_canvas.create_rectangle(enemy_battle_hp_x, enemy_battle_hp_y, enemy_battle_hp_x1, enemy_battle_hp_y1, fill = 'red', outline='black')
+enemy_battle_hp_bar_back = battle_canvas.create_rectangle(enemy_battle_hp_x, enemy_battle_hp_y, enemy_battle_hp_x1, enemy_battle_hp_y1, fill = 'green', outline='black')
 
 class action_text:
     def __init__(self, disposition_x, disposition_y, text):
@@ -62,6 +84,8 @@ class action_text:
 attack_text = action_text(0, 0, 'attack')
 block_text = action_text(0, 30, 'block')
 
+
+#курсор
 cursor_diametr = 5
 cursor_x = attack_text.text_x + attack_text.text_width + 10
 cursor_y = attack_text.text_y + attack_text.text_bar_size/2 - cursor_diametr/2
@@ -109,6 +133,9 @@ def to_battle_state():
     game_states['map'] = False
     game_states['battle'] = True
     #main_window.after(16, to_battle_state)
+    
+    if battle_logic.battle_cicle() == True:
+        to_map_state()
 
 def key_for_map_state():
     if keys_pressed['m']:
@@ -117,10 +144,10 @@ def key_for_map_state():
 
 def to_map_state():
     
-        battle_canvas.pack_forget()
-        map_canvas.pack()
-        game_states['battle'] = False
-        game_states['map'] = True
+    battle_canvas.pack_forget()
+    map_canvas.pack()
+    game_states['battle'] = False
+    game_states['map'] = True
         
     
 
@@ -177,6 +204,10 @@ def character_movement():
         # Повторяем каждые 16 мс (~60 кадров в секунду)
     main_window.after(16, character_movement)
 
+def update_battle_screen():
+    battle_canvas.update()
+    main_window.after(16*5, update_battle_screen)
+
 def make_choice():
     if battle_canvas.coords(cursor)[1] == 234.5:
         print('block')
@@ -199,7 +230,7 @@ def cursor_movement():
 def press_enter():
     if game_states['battle'] == True:
         if keys_pressed['Return'] == True:
-            print('enter is pressed')
+            #print('enter is pressed')
             make_choice()
     main_window.after(16, press_enter)
 
@@ -207,6 +238,7 @@ character_movement()
 key_for_map_state()
 cursor_movement()
 press_enter()
+update_battle_screen()
 
 # Привязываем обработчики событий
 main_window.bind("<KeyPress>", key_pressed)
