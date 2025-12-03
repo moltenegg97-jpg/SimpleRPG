@@ -35,10 +35,47 @@ def draw_characters():
     goblin2 = main_window.map_canvas.create_oval(70, 80, 78, 88, fill='red', outline='black', tags='enemy')
 
     
+def get_list_of_overlaps(dx, dy)->dict:
+    list_of_overlaps = {}
+    collision_x1, collision_y1, collision_x2, collision_y2 = main_window.map_canvas.bbox('character') #bbbox -> tuple
+    collision_x1 += dx
+    collision_x2 += dx
+    collision_y1 += dy
+    collision_y2 += dy
+    overlaps_id: tuple = (main_window.map_canvas.find_overlapping(collision_x1, collision_y1, collision_x2, collision_y2))
+
+    for i in overlaps_id:            
+        #list_of_overlasps_tags.append(map_canvas.gettags(i)[0])
+        if main_window.map_canvas.gettags(i)[0] in list_of_overlaps:        
+            list_of_overlaps[main_window.map_canvas.gettags(i)[0]].append(i)
+        else:
+            list_of_overlaps[main_window.map_canvas.gettags(i)[0]] = [i]
+    return list_of_overlaps
+
+def can_move(dx, dy)->bool:
+    if 'wall' in get_list_of_overlaps(dx, dy):
+        return False
+    return True
+
+
+def move_pc():
+    dx, dy = 0, 0
+    
+    if list_of_keys['w']:
+        dy -= 2
+    if list_of_keys['s']:
+        dy += 2
+    if list_of_keys['a']:
+        dx -= 2
+    if list_of_keys['d']:
+        dx += 2
+
+    if (dx != 0 or dy != 0) and can_move(dx, dy):
+        main_window.map_canvas.move('character', dx, dy)
 
 if __name__ == '__main__':
     
-    game_window.main_window.map_frame.pack() #импортировать game_window для теста из модуля
+    #game_window.main_window.map_frame.pack() #импортировать game_window для теста из модуля
     draw_map()
     draw_characters()
-    game_window.main_window.main_window.mainloop() #импортировать game_window для теста из модуля
+    #game_window.main_window.main_window.mainloop() #импортировать game_window для теста из модуля
