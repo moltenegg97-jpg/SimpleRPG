@@ -62,20 +62,19 @@ def can_move(dx, dy)->bool:
 
 
 def move_pc():
-    if game_state.state['map']:
-        dx, dy = 0, 0
+    dx, dy = 0, 0
     
-        if list_of_keys['w']:
-            dy -= 2
-        if list_of_keys['s']:
-            dy += 2
-        if list_of_keys['a']:
-            dx -= 2
-        if list_of_keys['d']:
-            dx += 2
+    if list_of_keys['w']:
+        dy -= 2
+    if list_of_keys['s']:
+        dy += 2
+    if list_of_keys['a']:
+        dx -= 2
+    if list_of_keys['d']:
+        dx += 2
 
-        if (dx != 0 or dy != 0) and can_move(dx, dy):
-            main_window.map_canvas.move('character', dx, dy)
+    if (dx != 0 or dy != 0) and can_move(dx, dy):
+        main_window.map_canvas.move('character', dx, dy)
 
 if __name__ == '__main__':
     

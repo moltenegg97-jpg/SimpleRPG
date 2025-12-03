@@ -3,7 +3,9 @@ list_of_keys = {
     'a': False, 
     's': False,
     'd': False,
-    'm': False,
+    'm': False, 
+    't': False, #для теста
+    'y': False, #для теста
     'Return': False
 }
 

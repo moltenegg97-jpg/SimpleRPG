@@ -6,12 +6,15 @@ from game_state_control import game_state #сейчас для теста/ ил�
 import battle 
 
 def refresh_map():
-    map.move_pc()
+    if game_state.state['map']:
+        map.move_pc()
     main_window.main_window.after(16, refresh_map)
 
 def refresh_battle():
-    battle.exit_battle()
-    main_window.main_window.after(16, refresh_battle) #временно для теста
+    if game_state.state['battle']:
+        battle.battle_action()
+        battle.exit_battle()
+    main_window.main_window.after(16*8, refresh_battle) #временно для теста
 
 def main():
     map.draw_map()
