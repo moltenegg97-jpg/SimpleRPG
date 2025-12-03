@@ -2,8 +2,8 @@ import tkinter
 from game_window import main_window
 import map
 import keys
-import game_state_control
-import battle
+import game_state_control #сейчас для теста/ или нет
+import battle 
 
 def refresh_map():
     map.move_pc()
@@ -14,6 +14,7 @@ def main():
     map.draw_characters()
     refresh_map()
     battle.draw_icons()
+    battle.draw_hp_bars()
 
     
     
@@ -21,7 +22,7 @@ def main():
     main_window.main_window.bind("<KeyRelease>", keys.key_released)
     
     main_window.map_frame.pack() #сейчас для теста
-    game_state_control.change_to_battle()
+    game_state_control.change_to_battle() #сейчас для теста
 
     main_window.main_window.mainloop()
 
