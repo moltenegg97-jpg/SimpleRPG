@@ -55,6 +55,8 @@ def get_list_of_overlaps(dx, dy)->dict:
 def can_move(dx, dy)->bool:
     if 'wall' in get_list_of_overlaps(dx, dy):
         return False
+    if 'enemy' in get_list_of_overlaps(dx, dy):
+        print('ахтунг') #задел на переход в бой
     return True
 
 
