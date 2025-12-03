@@ -1,6 +1,7 @@
 import tkinter
 from game_window import main_window
-
+from keys import list_of_keys
+from game_state_control import game_state
 #icons
 icon_hight = 100
 icon_width = 80
@@ -40,3 +41,7 @@ def draw_hp_bars() -> None:
 
     pc_hp_bar_front = main_window.battle_canvas.create_rectangle(pc_hp_x, pc_hp_y, pc_hp_x1, pc_hp_y1, fill = 'green', outline='black', tags='pc_bar')
     enemy_hp_bar_bg = main_window.battle_canvas.create_rectangle(enemy_hp_x, enemy_hp_y, enemy_hp_x1, enemy_hp_y1, fill = 'green', outline='black')
+
+def exit_battle():
+    if list_of_keys['m']:
+        game_state.change_to_map()

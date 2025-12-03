@@ -1,6 +1,7 @@
 import tkinter
 from game_window import main_window 
 from keys import list_of_keys
+from game_state_control import game_state
 #import game_window импортировать для теста из модуля
 
 map_matrix = [
@@ -56,24 +57,25 @@ def can_move(dx, dy)->bool:
     if 'wall' in get_list_of_overlaps(dx, dy):
         return False
     if 'enemy' in get_list_of_overlaps(dx, dy):
-        print('ахтунг') #задел на переход в бой
+        game_state.change_to_battle() #задел на переход в бой
     return True
 
 
 def move_pc():
-    dx, dy = 0, 0
+    if game_state.state['map']:
+        dx, dy = 0, 0
     
-    if list_of_keys['w']:
-        dy -= 2
-    if list_of_keys['s']:
-        dy += 2
-    if list_of_keys['a']:
-        dx -= 2
-    if list_of_keys['d']:
-        dx += 2
+        if list_of_keys['w']:
+            dy -= 2
+        if list_of_keys['s']:
+            dy += 2
+        if list_of_keys['a']:
+            dx -= 2
+        if list_of_keys['d']:
+            dx += 2
 
-    if (dx != 0 or dy != 0) and can_move(dx, dy):
-        main_window.map_canvas.move('character', dx, dy)
+        if (dx != 0 or dy != 0) and can_move(dx, dy):
+            main_window.map_canvas.move('character', dx, dy)
 
 if __name__ == '__main__':
     
