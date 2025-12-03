@@ -24,8 +24,8 @@ class Character:
 PC = Character('PC', Hp=100, Atc=15)
 Goblin = Character('Goblin', Hp=60, Atc=5)
 
+
 def battle_cicle():
-    
     while Goblin.Hp > 0 and PC.Hp > 0:
         player_input = input('введите a для атаки d  для защиты :')
         if player_input == 'a':

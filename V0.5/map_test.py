@@ -57,19 +57,19 @@ player_battle_hp_x = player_battle_icon_x+10
 player_battle_hp_y = player_battle_icon_y+player_battle_icon_hight+20
 player_battle_hp_x1 = player_battle_icon_x+player_battle_icon_width-10
 player_battle_hp_y1 = player_battle_icon_y+player_battle_icon_hight+20+10
-player_battle_hp_x_din = player_battle_icon_x+(player_battle_icon_width-10)*battle_logic.PC.Hp/battle_logic.PC.HpMax
+player_battle_hp_x_din = battle_logic.PC.Hp/battle_logic.PC.HpMax
 
 player_battle_hp_bar_back = battle_canvas.create_rectangle(player_battle_hp_x, player_battle_hp_y, player_battle_hp_x1, player_battle_hp_y1, fill = 'red', outline='black')
-player_battle_hp_bar_back = battle_canvas.create_rectangle(player_battle_hp_x, player_battle_hp_y, player_battle_hp_x_din, player_battle_hp_y1, fill = 'green', outline='black')
+player_battle_hp_bar_back = battle_canvas.create_rectangle(player_battle_hp_x, player_battle_hp_y, player_battle_hp_x1, player_battle_hp_y1, fill = 'green', outline='black', tags='pc_bar')
 
 enemy_battle_hp_x = enemy_battle_icon_x+10
 enemy_battle_hp_y = enemy_battle_icon_y+enemy_battle_icon_hight+20
 enemy_battle_hp_x1 = enemy_battle_icon_x+enemy_battle_icon_width-10
 enemy_battle_hp_y1 = enemy_battle_icon_y+enemy_battle_icon_hight+20+10
-enemy_battle_hp_x_din = enemy_battle_icon_x+(enemy_battle_icon_width-10)*battle_logic.Goblin.Hp/battle_logic.Goblin.HpMax
+enemy_battle_hp_x_din = battle_logic.Goblin.Hp/battle_logic.Goblin.HpMax
 
 enemy_battle_hp_bar_back = battle_canvas.create_rectangle(enemy_battle_hp_x, enemy_battle_hp_y, enemy_battle_hp_x1, enemy_battle_hp_y1, fill = 'red', outline='black')
-enemy_battle_hp_bar_back = battle_canvas.create_rectangle(enemy_battle_hp_x, enemy_battle_hp_y, enemy_battle_hp_x1, enemy_battle_hp_y1, fill = 'green', outline='black')
+enemy_battle_hp_bar_back = battle_canvas.create_rectangle(enemy_battle_hp_x, enemy_battle_hp_y, enemy_battle_hp_x1, enemy_battle_hp_y1, fill = 'green', outline='black', tags='enemy_bar')
 
 class action_text:
     def __init__(self, disposition_x, disposition_y, text):
@@ -204,15 +204,19 @@ def character_movement():
         # Повторяем каждые 16 мс (~60 кадров в секунду)
     main_window.after(16, character_movement)
 
-def update_battle_screen():
-    battle_canvas.update()
-    main_window.after(16*5, update_battle_screen)
+
 
 def make_choice():
     if battle_canvas.coords(cursor)[1] == 234.5:
         print('block')
     if battle_canvas.coords(cursor)[1] == 204.5:
         print('attack')
+
+def update_hp_bars():
+    battle_canvas.scale('pc_bar', 0, 0, player_battle_hp_x_din, 1)
+    battle_canvas.scale('enemy_bar', 0, 0, enemy_battle_hp_x_din, 1)
+    print(player_battle_hp_x_din, enemy_battle_hp_x_din)
+    main_window.after(90, update_hp_bars)
 
 def cursor_movement():
     rate_of_update = 6
@@ -238,7 +242,7 @@ character_movement()
 key_for_map_state()
 cursor_movement()
 press_enter()
-update_battle_screen()
+update_hp_bars()
 
 # Привязываем обработчики событий
 main_window.bind("<KeyPress>", key_pressed)
