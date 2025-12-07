@@ -54,10 +54,12 @@ def get_list_of_overlaps(dx, dy)->dict:
     return list_of_overlaps
 
 def can_move(dx, dy)->bool:
-    if 'wall' in get_list_of_overlaps(dx, dy):
+    list_of_overlaps = get_list_of_overlaps(dx, dy)
+    if 'wall' in list_of_overlaps:
         return False
-    if 'enemy' in get_list_of_overlaps(dx, dy):
+    if 'enemy' in list_of_overlaps:
         game_state.change_to_battle() #задел на переход в бой
+        main_window.map_canvas.delete(list_of_overlaps['enemy'][0])
     return True
 
 

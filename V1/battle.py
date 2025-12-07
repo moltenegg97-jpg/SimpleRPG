@@ -47,6 +47,8 @@ def draw_hp_bars() -> None:
 def exit_battle():
     if list_of_keys['m']:
         game_state.change_to_map()
+    if game_objects.pc.hp <= 0 or game_objects.goblin.hp <= 0:
+         game_state.change_to_map()
 
 def battle_action():
     if list_of_keys['t']:
@@ -57,7 +59,7 @@ def battle_action():
 
     d_hp1 = game_objects.pc.hp/game_objects.pc.max_hp
     d_hp2 = game_objects.goblin.hp/game_objects.goblin.max_hp
-    print(d_hp1, d_hp2)
+    refresh_hp_bars(d_hp1, d_hp2)
 
 
 def refresh_hp_bars(d_hp1, d_hp2):
@@ -68,3 +70,4 @@ def refresh_hp_bars(d_hp1, d_hp2):
         enemy_din_x = enemy_hp_x+hp_bar_width*d_hp2
         pc_hp_bar_front = main_window.battle_canvas.create_rectangle(pc_hp_x, pc_hp_y, pc_din_x, pc_hp_y1, fill = 'green', outline='black', tags='pc_bar')
         enemy_hp_bar_front = main_window.battle_canvas.create_rectangle(enemy_hp_x, enemy_hp_y, enemy_din_x, enemy_hp_y1, fill = 'green', outline='black', tags='enemy_bar')
+        
