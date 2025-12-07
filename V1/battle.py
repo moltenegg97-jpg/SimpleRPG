@@ -1,6 +1,6 @@
 import tkinter
 from game_window import main_window
-from keys import list_of_keys
+import keys
 from game_state_control import game_state
 import game_objects
 #icons
@@ -45,16 +45,18 @@ def draw_hp_bars() -> None:
     enemy_hp_bar_front = main_window.battle_canvas.create_rectangle(enemy_hp_x, enemy_hp_y, enemy_hp_x1, enemy_hp_y1, fill = 'green', outline='black', tags='enemy_bar')
 
 def exit_battle():
-    if list_of_keys['m']:
+    if keys.list_of_keys['m']:
         game_state.change_to_map()
     if game_objects.pc.hp <= 0 or game_objects.goblin.hp <= 0:
          game_state.change_to_map()
 
 def battle_action():
-    if list_of_keys['t']:
-        game_objects.pc.make_attack(game_objects.goblin)
+    if keys.list_of_keys['t'] and keys.key_tapped['t']:
+            game_objects.pc.make_attack(game_objects.goblin)
+            keys.reset_input_flags()
+            
         
-    if list_of_keys['y']:
+    if keys.list_of_keys['y']:
         game_objects.pc.heal(game_objects.goblin)
 
     d_hp1 = game_objects.pc.hp/game_objects.pc.max_hp

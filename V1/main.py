@@ -5,16 +5,18 @@ import keys
 from game_state_control import game_state #сейчас для теста/ или нет
 import battle 
 
+refresh_rate = 16
+
 def refresh_map():
     if game_state.state['map']:
         map.move_pc()
-    main_window.main_window.after(16, refresh_map)
+    main_window.main_window.after(refresh_rate, refresh_map)
 
 def refresh_battle():
     if game_state.state['battle']:
         battle.battle_action()
         battle.exit_battle()
-    main_window.main_window.after(16*8, refresh_battle) #временно для теста
+    main_window.main_window.after(refresh_rate, refresh_battle) #временно для теста
 
 def main():
     map.draw_map()

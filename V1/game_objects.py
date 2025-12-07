@@ -16,5 +16,5 @@ class Character:
             target.hp = target.max_hp
         
 
-pc = Character('pc', hp=80, atk=15)
-goblin = Character('goblin', hp=60, atk=10)
+pc = Character('pc', hp=80, atk=5)
+goblin = Character('goblin', hp=100, atk=10)
