@@ -14,7 +14,19 @@ class Character:
         target.hp = target.hp + self.atk
         if target.hp > target.max_hp:
             target.hp = target.max_hp
+
+class Goblin(Character):
+    def __init__(self, id, **kwargs):
+        default_stats = {'hp':100, 'atk':10}
+
+        stats = {**default_stats, **kwargs}
+        super().__init__(name='goblin', **stats)
+        self.id = id
         
 
 pc = Character('pc', hp=80, atk=5)
-goblin = Character('goblin', hp=100, atk=10)
+goblin1 = Goblin('1')
+
+if __name__ == '__main__':
+    print(goblin1.hp)
+    print(goblin1.atk)

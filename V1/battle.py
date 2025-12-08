@@ -47,20 +47,20 @@ def draw_hp_bars() -> None:
 def exit_battle():
     if keys.list_of_keys['m']:
         game_state.change_to_map()
-    if game_objects.pc.hp <= 0 or game_objects.goblin.hp <= 0:
+    if game_objects.pc.hp <= 0 or game_objects.goblin1.hp <= 0:
          game_state.change_to_map()
 
 def battle_action():
     if keys.list_of_keys['t'] and keys.key_tapped['t']:
-            game_objects.pc.make_attack(game_objects.goblin)
+            game_objects.pc.make_attack(game_objects.goblin1)
             keys.reset_input_flags()
             
         
     if keys.list_of_keys['y']:
-        game_objects.pc.heal(game_objects.goblin)
+        game_objects.pc.heal(game_objects.goblin1)
 
     d_hp1 = game_objects.pc.hp/game_objects.pc.max_hp
-    d_hp2 = game_objects.goblin.hp/game_objects.goblin.max_hp
+    d_hp2 = game_objects.goblin1.hp/game_objects.goblin1.max_hp
     refresh_hp_bars(d_hp1, d_hp2)
 
 
