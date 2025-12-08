@@ -6,9 +6,11 @@ list_of_keys = {
     'm': False, 
     't': False, #для теста
     'y': False, #для теста
+    'u': False, #для теста
     'Return': False
 }
 
+#должен повторять list_of_keys
 key_tapped = {
     'w': False,
     'a': False, 
@@ -17,6 +19,7 @@ key_tapped = {
     'm': False, 
     't': False, #для теста
     'y': False, #для теста
+    'u': False, #для теста
     'Return': False
 }
 

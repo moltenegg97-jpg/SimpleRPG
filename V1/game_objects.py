@@ -1,3 +1,4 @@
+
 class Character:
     def __init__(self, name, hp, atk):
         self.name = name
@@ -22,10 +23,20 @@ class Goblin(Character):
         stats = {**default_stats, **kwargs}
         super().__init__(name='goblin', **stats)
         self.id = id
-        
+
+character_classes = {'Goblin':Goblin}
+
+enemy_dict = {}
+
+def spawn_enemy(type:str, object_id, **kwargs):
+    return character_classes.get(type)(id=object_id, **kwargs)
+
+
+
 
 pc = Character('pc', hp=80, atk=5)
 goblin1 = Goblin('1')
+
 
 if __name__ == '__main__':
     print(goblin1.hp)

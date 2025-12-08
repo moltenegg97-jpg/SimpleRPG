@@ -2,6 +2,7 @@ import tkinter
 from game_window import main_window 
 from keys import list_of_keys
 from game_state_control import game_state
+import game_objects
 #import game_window импортировать для теста из модуля
 
 map_matrix = [
@@ -27,13 +28,20 @@ def draw_map():
                 layer = 'background'
             main_window.map_canvas.create_rectangle(j*tile_size, i*tile_size, j*tile_size+tile_size, i*tile_size+tile_size, fill=color, outline="black", tags=layer)
 
+def spawn_enemy_by_sprite(sprite, type:str, obj_id:str):
+    obj_name = game_objects.spawn_enemy(type, obj_id)
+    game_objects.enemy_dict[sprite] = obj_name
+    return obj_name
+
 def draw_characters():
     playerY = 30
     playerX = 30
     character = main_window.map_canvas.create_oval(playerY, playerX, playerY+8, playerX+8, fill = 'yellow', outline='black', tags='character')
 
-    goblin1 = main_window.map_canvas.create_oval(40, 100, 48, 108, fill='red', outline='black', tags='enemy')
-    goblin2 = main_window.map_canvas.create_oval(70, 80, 78, 88, fill='red', outline='black', tags='enemy')
+    goblin_sprite1 = main_window.map_canvas.create_oval(40, 100, 48, 108, fill='red', outline='black', tags='enemy')
+    spawn_enemy_by_sprite(goblin_sprite1, 'Goblin', '1')
+    goblin_sprite2 = main_window.map_canvas.create_oval(70, 80, 78, 88, fill='red', outline='black', tags='enemy')
+    spawn_enemy_by_sprite(goblin_sprite2, 'Goblin', '2')
 
     
 def get_list_of_overlaps(dx, dy)->dict:
@@ -53,13 +61,16 @@ def get_list_of_overlaps(dx, dy)->dict:
             list_of_overlaps[main_window.map_canvas.gettags(i)[0]] = [i]
     return list_of_overlaps
 
+def delete_object(obj_id):
+    del game_objects.enemy_dict[obj_id] #удаляет из словаря объектов
+    main_window.map_canvas.delete(obj_id) #удаляет с карты
 def can_move(dx, dy)->bool:
     list_of_overlaps = get_list_of_overlaps(dx, dy)
     if 'wall' in list_of_overlaps:
         return False
     if 'enemy' in list_of_overlaps:
         game_state.change_to_battle() #задел на переход в бой
-        main_window.map_canvas.delete(list_of_overlaps['enemy'][0])
+        delete_object(list_of_overlaps['enemy'][0])
     return True
 
 
@@ -74,6 +85,8 @@ def move_pc():
         dx -= 2
     if list_of_keys['d']:
         dx += 2
+    if list_of_keys['u']:
+        print(game_objects.enemy_dict)
 
     if (dx != 0 or dy != 0) and can_move(dx, dy):
         main_window.map_canvas.move('character', dx, dy)
