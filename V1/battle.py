@@ -31,7 +31,6 @@ enemy_hp_y = enemy_icon_y + icon_hight + 20
 enemy_hp_x1 = enemy_hp_x + hp_bar_width
 enemy_hp_y1 = enemy_hp_y + hp_bar_hight
 
-
 def draw_icons() -> None:
     pc_icon = main_window.battle_canvas.create_rectangle(pc_icon_x, pc_icon_y, pc_icon_x1, pc_icon_y1, fill = 'yellow', outline='black')
     enemy_icon = main_window.battle_canvas.create_rectangle(enemy_icon_x, enemy_icon_y, enemy_icon_x1, enemy_icon_y1,  fill = 'red', outline='black')
@@ -47,20 +46,20 @@ def draw_hp_bars() -> None:
 def exit_battle():
     if keys.list_of_keys['m']:
         game_state.change_to_map()
-    if game_objects.pc.hp <= 0 or game_objects.goblin1.hp <= 0:
+    if game_objects.pc.hp <= 0 or game_state.enemy_id.hp <= 0:
          game_state.change_to_map()
 
 def battle_action():
     if keys.list_of_keys['t'] and keys.key_tapped['t']:
-            game_objects.pc.make_attack(game_objects.goblin1)
+            game_objects.pc.make_attack(game_state.enemy_id)
             keys.reset_input_flags()
             
         
     if keys.list_of_keys['y']:
-        game_objects.pc.heal(game_objects.goblin1)
+        game_objects.pc.heal(game_state.enemy_id)
 
     d_hp1 = game_objects.pc.hp/game_objects.pc.max_hp
-    d_hp2 = game_objects.goblin1.hp/game_objects.goblin1.max_hp
+    d_hp2 = game_state.enemy_id.hp/game_state.enemy_id.max_hp
     refresh_hp_bars(d_hp1, d_hp2)
 
 

@@ -2,6 +2,7 @@ import tkinter
 from game_window import main_window
 
 class GameState:
+    
     def __init__(self, map_frame, battle_frame):
         self.map_frame = map_frame
         self.battle_frame = battle_frame
@@ -9,9 +10,11 @@ class GameState:
             'map': False,
             'battle': False
         }
-    def change_to_battle(self):
+        self.enemy_id = None #объект с которым идёт бой
+    def change_to_battle(self, id):
         self.map_frame.pack_forget()
         self.battle_frame.pack()
+        self.enemy_id = id
         for i in self.state:
             self.state[i] = False
         self.state['battle'] = True
