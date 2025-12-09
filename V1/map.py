@@ -3,6 +3,7 @@ from game_window import main_window
 from keys import list_of_keys
 from game_state_control import game_state
 import game_objects
+import battle
 #import game_window импортировать для теста из модуля
 
 map_matrix = [
@@ -70,6 +71,7 @@ def can_move(dx, dy)->bool:
         return False
     if 'enemy' in list_of_overlaps:
         game_state.change_to_battle(game_objects.enemy_dict[list_of_overlaps['enemy'][0]]) #задел на переход в бой
+        battle.draw_hp_bars()
         delete_object(list_of_overlaps['enemy'][0])
     return True
 

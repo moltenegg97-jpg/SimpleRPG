@@ -31,6 +31,23 @@ enemy_hp_y = enemy_icon_y + icon_hight + 20
 enemy_hp_x1 = enemy_hp_x + hp_bar_width
 enemy_hp_y1 = enemy_hp_y + hp_bar_hight
 
+#значения здоровья
+
+hp_bar_text1_x = pc_hp_x + hp_bar_width/2
+hp_bar_text1_y = pc_hp_y - 10
+hp_bar_text2_x = enemy_hp_x + hp_bar_width/2
+hp_bar_text2_y = enemy_hp_y - 10
+
+hp_bar_textwid1 = main_window.battle_canvas.create_text( hp_bar_text1_x, hp_bar_text1_y, text='')
+
+hp_bar_textwid2 = main_window.battle_canvas.create_text(hp_bar_text2_x, hp_bar_text2_y, text='')
+
+def update_hp_text():
+    hp_bar_text1 = f'{game_objects.pc.hp}/{game_objects.pc.max_hp}'
+    main_window.battle_canvas.itemconfig(hp_bar_textwid1, text = hp_bar_text1)
+    hp_bar_text2 = f'{game_state.enemy_id.hp}/{game_state.enemy_id.max_hp}'
+    main_window.battle_canvas.itemconfig(hp_bar_textwid2, text = hp_bar_text2)
+
 def draw_icons() -> None:
     pc_icon = main_window.battle_canvas.create_rectangle(pc_icon_x, pc_icon_y, pc_icon_x1, pc_icon_y1, fill = 'yellow', outline='black')
     enemy_icon = main_window.battle_canvas.create_rectangle(enemy_icon_x, enemy_icon_y, enemy_icon_x1, enemy_icon_y1,  fill = 'red', outline='black')
@@ -42,6 +59,8 @@ def draw_hp_bars() -> None:
 
     pc_hp_bar_front = main_window.battle_canvas.create_rectangle(pc_hp_x, pc_hp_y, pc_hp_x1, pc_hp_y1, fill = 'green', outline='black', tags='pc_bar')
     enemy_hp_bar_front = main_window.battle_canvas.create_rectangle(enemy_hp_x, enemy_hp_y, enemy_hp_x1, enemy_hp_y1, fill = 'green', outline='black', tags='enemy_bar')
+    update_hp_text()
+    
 
 def exit_battle():
     if keys.list_of_keys['m']:
@@ -61,6 +80,7 @@ def battle_action():
     d_hp1 = game_objects.pc.hp/game_objects.pc.max_hp
     d_hp2 = game_state.enemy_id.hp/game_state.enemy_id.max_hp
     refresh_hp_bars(d_hp1, d_hp2)
+    update_hp_text()
 
 
 def refresh_hp_bars(d_hp1, d_hp2):
