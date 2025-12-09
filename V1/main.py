@@ -23,6 +23,7 @@ def main():
     map.draw_characters()
     refresh_map()
     battle.draw_icons()
+    battle.draw_battle_options()
     
     refresh_battle() #временно для теста
     
