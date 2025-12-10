@@ -3,6 +3,9 @@ from game_window import main_window
 import keys
 from game_state_control import game_state
 import game_objects
+
+battle_option_table = {}
+
 #icons
 icon_hight = 100
 icon_width = 80
@@ -41,6 +44,8 @@ hp_bar_textwid1 = main_window.battle_canvas.create_text( hp_bar_text1_x, hp_bar_
 hp_bar_textwid2 = main_window.battle_canvas.create_text(hp_bar_text2_x, hp_bar_text2_y, text='')
 
 #курсор
+cursor_pos_x = 0
+cursor_pos_y = 0
 cursor_x = 95
 cursor_y = 205
 cursor_jp_x = 80
@@ -66,7 +71,7 @@ def draw_hp_bars() -> None:
     pc_hp_bar_front = main_window.battle_canvas.create_rectangle(pc_hp_x, pc_hp_y, pc_hp_x1, pc_hp_y1, fill = 'green', outline='black', tags='pc_bar')
     enemy_hp_bar_front = main_window.battle_canvas.create_rectangle(enemy_hp_x, enemy_hp_y, enemy_hp_x1, enemy_hp_y1, fill = 'green', outline='black', tags='enemy_bar')
     update_hp_text()
-    
+
 class BattleChoice:
     def __init__(self, name, x:int, y:int):
         self.start_x = 30
@@ -77,7 +82,7 @@ class BattleChoice:
         self.y_hight = 15
         self.text_width = 40
         self.text_buf = 5
-
+        battle_option_table[(x, y)] = name
         self.name = name
         self.x = x
         self.y = y
@@ -93,15 +98,33 @@ def move_cursor():
     dx, dy = 0, 0
     if keys.key_tapped['w']:
             dy -= cursor_jp_y
+            keys.reset_input_flags()
     if keys.key_tapped['s']:
             dy += cursor_jp_y
+            keys.reset_input_flags()
     if keys.key_tapped['a']:
             dx -= cursor_jp_x
+            keys.reset_input_flags()
     if keys.key_tapped['d']:
             dx += cursor_jp_x
+            keys.reset_input_flags()
+    if keys.key_tapped['u']:
+            print(battle_option_table)
+            keys.reset_input_flags()
         #print(battle_canvas.coords(cursor))
     main_window.battle_canvas.move(cursor, dx, dy)
-    keys.reset_input_flags()
+
+def pick_battle_option():
+    if keys.key_tapped['Return']:
+            print('key is pressed') #для теста, удалить позже
+            print(cursor_pos_x, cursor_pos_y) #для теста, удалить позже
+            print(battle_option_table.get((cursor_pos_x, cursor_pos_y))) #для теста, удалить позже
+            if battle_option_table.get((cursor_pos_x, cursor_pos_y)) == 'attack':
+                  game_objects.pc.make_attack(game_state.enemy_id)
+            if battle_option_table.get((cursor_pos_x, cursor_jp_y)) == 'heal':
+                  game_objects.pc.heal(game_state.enemy_id)
+            keys.reset_input_flags()
+    
 
 def exit_battle():
     if keys.list_of_keys['m']:
@@ -112,9 +135,7 @@ def exit_battle():
 def battle_action():
     if keys.list_of_keys['t'] and keys.key_tapped['t']:
             game_objects.pc.make_attack(game_state.enemy_id)
-            keys.reset_input_flags()
-            
-        
+            keys.reset_input_flags()                 
     if keys.list_of_keys['y']:
         game_objects.pc.heal(game_state.enemy_id)
 
