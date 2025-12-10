@@ -41,8 +41,10 @@ hp_bar_textwid1 = main_window.battle_canvas.create_text( hp_bar_text1_x, hp_bar_
 hp_bar_textwid2 = main_window.battle_canvas.create_text(hp_bar_text2_x, hp_bar_text2_y, text='')
 
 #курсор
-cursor_x = 30
-cursor_y = 30
+cursor_x = 95
+cursor_y = 205
+cursor_jp_x = 80
+cursor_jp_y = 30
 cursor_diam = 5
 cursor = main_window.battle_canvas.create_oval(cursor_x, cursor_y, cursor_x+cursor_diam, cursor_y+cursor_diam, fill = 'black', outline='black', tags='cursor')
 
@@ -87,7 +89,19 @@ def draw_battle_options():
     hl_btn = BattleChoice('heal', 0, 1)
     some_sht = BattleChoice('sm_sht', 1, 0)
 
-
+def move_cursor():
+    dx, dy = 0, 0
+    if keys.key_tapped['w']:
+            dy -= cursor_jp_y
+    if keys.key_tapped['s']:
+            dy += cursor_jp_y
+    if keys.key_tapped['a']:
+            dx -= cursor_jp_x
+    if keys.key_tapped['d']:
+            dx += cursor_jp_x
+        #print(battle_canvas.coords(cursor))
+    main_window.battle_canvas.move(cursor, dx, dy)
+    keys.reset_input_flags()
 
 def exit_battle():
     if keys.list_of_keys['m']:
