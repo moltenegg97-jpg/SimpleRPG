@@ -78,19 +78,19 @@ class Cursor():
 
     def move_cursor(self):
         dx, dy = 0, 0
-        if keys.key_tapped['w']:
+        if keys.key_tapped['w'] and main_window.battle_canvas.coords(self.cursor)[1] > 205: #ограничения по передвижению курсора, можно улучшить позже
             self.cursor_pos_y -= 1
             dy -= self.cursor_jp_y
             keys.reset_input_flags()
-        if keys.key_tapped['s']:
+        if keys.key_tapped['s'] and main_window.battle_canvas.coords(self.cursor)[1] < 235: #ограничения по передвижению курсора, можно улучшить позже
             self.cursor_pos_y += 1
             dy += self.cursor_jp_y
             keys.reset_input_flags()
-        if keys.key_tapped['a']:
+        if keys.key_tapped['a'] and main_window.battle_canvas.coords(self.cursor)[0] > 95: #ограничения по передвижению курсора, можно улучшить позже
             self.cursor_pos_x -= 1
             dx -= self.cursor_jp_x
             keys.reset_input_flags()
-        if keys.key_tapped['d']:
+        if keys.key_tapped['d'] and main_window.battle_canvas.coords(self.cursor)[0] < 255: #ограничения по передвижению курсора, можно улучшить позже
             self.cursor_pos_x +=1
             dx += self.cursor_jp_x
             keys.reset_input_flags()
@@ -105,6 +105,7 @@ class Cursor():
             print('key is pressed') #для теста, удалить позже
             print(self.cursor_pos_x, self.cursor_pos_y) #для теста, удалить позже
             print(battle_option_table.get((self.cursor_pos_x, self.cursor_pos_y))) #для теста, удалить позже
+            print(main_window.battle_canvas.coords(self.cursor))
             if battle_option_table.get((self.cursor_pos_x, self.cursor_pos_y)) == 'attack':
                 game_objects.pc.make_attack(game_state.enemy_id)
             if battle_option_table.get((self.cursor_pos_x, self.cursor_pos_y)) == 'heal':
