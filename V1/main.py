@@ -15,8 +15,8 @@ def refresh_map():
 def refresh_battle():
     if game_state.state['battle']:
         battle.battle_action()
-        battle.move_cursor()
-        battle.pick_battle_option()
+        battle.cursor.move_cursor()
+        battle.cursor.pick_battle_option()
         battle.exit_battle()
     main_window.main_window.after(refresh_rate, refresh_battle) #временно для теста
 
