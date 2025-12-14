@@ -4,6 +4,8 @@ from keys import list_of_keys
 from game_state_control import game_state
 import game_objects
 import battle
+from battle_system import battle_system
+
 #import game_window импортировать для теста из модуля
 
 map_matrix = [
@@ -65,13 +67,18 @@ def get_list_of_overlaps(dx, dy)->dict:
 def delete_object(obj_id):
     del game_objects.enemy_dict[obj_id] #удаляет из словаря объектов
     main_window.map_canvas.delete(obj_id) #удаляет с карты
+
+def start_battle(obj_id):
+    game_state.change_to_battle(obj_id)
+    battle.draw_hp_bars()
+    main_window.main_window.after(300, battle_system.active_battle) 
+
 def can_move(dx, dy)->bool:
     list_of_overlaps = get_list_of_overlaps(dx, dy)
     if 'wall' in list_of_overlaps:
         return False
     if 'enemy' in list_of_overlaps:
-        game_state.change_to_battle(game_objects.enemy_dict[list_of_overlaps['enemy'][0]]) #задел на переход в бой
-        battle.draw_hp_bars()
+        start_battle(game_objects.enemy_dict[list_of_overlaps['enemy'][0]]) #задел на переход в бой
         delete_object(list_of_overlaps['enemy'][0])
     return True
 

@@ -4,6 +4,7 @@ import game_map
 import keys
 from game_state_control import game_state #сейчас для теста/ или нет
 import battle 
+from battle_system import battle_system
 
 refresh_rate = 16
 
@@ -15,10 +16,13 @@ def refresh_map():
 def refresh_battle():
     if game_state.state['battle']:
         battle.battle_action()
-        battle.cursor.move_cursor()
-        battle.cursor.pick_battle_option()
+        #if battle_system.isPlayerturn:
+        #    battle.cursor.move_cursor()
+        #    battle.cursor.pick_battle_option()
         battle.exit_battle()
     main_window.main_window.after(refresh_rate, refresh_battle) #временно для теста
+
+
 
 def main():
     game_map.draw_map()

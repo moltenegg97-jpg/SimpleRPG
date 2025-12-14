@@ -3,6 +3,7 @@ from game_window import main_window
 import keys
 from game_state_control import game_state
 import game_objects
+from battle_system import battle_system
 
 battle_option_table = {}
 
@@ -100,7 +101,7 @@ class Cursor():
             #print(battle_canvas.coords(cursor))
         main_window.battle_canvas.move(self.cursor, dx, dy)
 
-    def pick_battle_option(self):
+    def pick_battle_option(self) -> bool: #if true - turn ended
         if keys.key_tapped['Return']:
             print('key is pressed') #для теста, удалить позже
             print(self.cursor_pos_x, self.cursor_pos_y) #для теста, удалить позже
@@ -108,9 +109,17 @@ class Cursor():
             print(main_window.battle_canvas.coords(self.cursor))
             if battle_option_table.get((self.cursor_pos_x, self.cursor_pos_y)) == 'attack':
                 game_objects.pc.make_attack(game_state.enemy_id)
+                battle_system.ai_action()
+                keys.reset_input_flags()
+                return True
+
             if battle_option_table.get((self.cursor_pos_x, self.cursor_pos_y)) == 'heal':
                 game_objects.pc.heal(game_state.enemy_id)
-            keys.reset_input_flags()
+                battle_system.ai_action()
+                keys.reset_input_flags()
+                return True
+        keys.reset_input_flags()
+        return False
 
 cursor = Cursor()
 

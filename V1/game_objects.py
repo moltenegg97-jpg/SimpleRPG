@@ -5,7 +5,7 @@ class Character:
         self.hp = hp
         self.max_hp = hp
         self.atk = atk
-
+        self.list_of_actions = ['attack', 'heal']
     def make_attack(self, target):
         target.hp = target.hp - self.atk
         if target.hp < 0:
@@ -27,7 +27,7 @@ class Goblin(Character):
 class PlayerCharacter(Character):
     def __init__(self, name, hp, atk):
         super().__init__(name, hp, atk)
-        self.list_of_actions = ['attack', 'heal']
+
 character_classes = {'Goblin':Goblin}
 
 enemy_dict = {}
