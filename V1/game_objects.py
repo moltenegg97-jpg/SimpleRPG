@@ -6,8 +6,10 @@ class Character:
         self.max_hp = hp
         self.atk = atk
         self.list_of_actions = ['attack', 'heal']
+        self.conditions = {'defending':0}
+        self.phy_res = 0
     def make_attack(self, target):
-        target.hp = target.hp - self.atk
+        target.hp = target.hp - self.atk*(1-target.phy_res)
         if target.hp < 0:
             target.hp = 0
 
@@ -15,14 +17,24 @@ class Character:
         target.hp = target.hp + self.atk
         if target.hp > target.max_hp:
             target.hp = target.max_hp
+    
+    def defend(self):
+        self.conditions['defending'] = 1
+    
+    def apply_condition_start_turn(self):
+        if self.conditions['defending'] == 0:
+            self.phy_res = 0
+    def apply_condition_end_turn(self):
+        if self.conditions['defending'] > 0:
+            self.phy_res = 1
 
 class Goblin(Character):
     def __init__(self, id, **kwargs):
         default_stats = {'hp':100, 'atk':10}
-
         stats = {**default_stats, **kwargs}
         super().__init__(name='goblin', **stats)
         self.id = id
+        self.list_of_actions = ['attack']
 
 class PlayerCharacter(Character):
     def __init__(self, name, hp, atk):

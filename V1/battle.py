@@ -3,7 +3,7 @@ from game_window import main_window
 import keys
 from game_state_control import game_state
 import game_objects
-from battle_system import battle_system
+
 
 battle_option_table = {}
 
@@ -76,6 +76,10 @@ class Cursor():
         self.cursor_jp_y = 30
         cursor_diam = 5
         self.cursor = main_window.battle_canvas.create_oval(cursor_x, cursor_y, cursor_x+cursor_diam, cursor_y+cursor_diam, fill = 'black', outline='black', tags='cursor')
+        self.choice_callback = None
+
+    def set_choice_callback(self, callback):
+        self.choice_callback = callback
 
     def move_cursor(self):
         dx, dy = 0, 0
@@ -107,18 +111,20 @@ class Cursor():
             print(self.cursor_pos_x, self.cursor_pos_y) #для теста, удалить позже
             print(battle_option_table.get((self.cursor_pos_x, self.cursor_pos_y))) #для теста, удалить позже
             print(main_window.battle_canvas.coords(self.cursor))
-            if battle_option_table.get((self.cursor_pos_x, self.cursor_pos_y)) == 'attack':
-                game_objects.pc.make_attack(game_state.enemy_id)
-                battle_system.ai_action()
+            action = battle_option_table.get((self.cursor_pos_x, self.cursor_pos_y))
+            if action in ['attack', 'heal', 'defend']:
+                if action == 'attack':
+                    game_objects.pc.make_attack(game_state.enemy_id)
+                elif action == 'heal':
+                    game_objects.pc.heal(game_state.enemy_id)
+                elif action == 'defend':
+                    game_objects.pc.defend()
                 keys.reset_input_flags()
-                return True
 
-            if battle_option_table.get((self.cursor_pos_x, self.cursor_pos_y)) == 'heal':
-                game_objects.pc.heal(game_state.enemy_id)
-                battle_system.ai_action()
-                keys.reset_input_flags()
+                if self.choice_callback:
+                    self.choice_callback(action)
+                print(game_objects.pc.conditions)
                 return True
-        keys.reset_input_flags()
         return False
 
 cursor = Cursor()
@@ -143,12 +149,8 @@ class BattleChoice:
 def draw_battle_options():
     atk_btn = BattleChoice('attack', 0, 0,)
     hl_btn = BattleChoice('heal', 0, 1)
-    some_sht = BattleChoice('sm_sht', 1, 0)
+    defend_btn = BattleChoice('defend', 1, 0)
 
-
-
-
-    
 
 def exit_battle():
     if keys.list_of_keys['m']:
