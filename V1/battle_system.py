@@ -9,6 +9,21 @@ class BattleSystem():
         self.isPlayerturn = False #для боя
         self.turn_is_finished = True
         self.on_player_choice_callback = None
+        self.corrent_state = None
+        self.previous_state = None
+        self.states = {
+            'begin_of_new_turn': None,
+            'player_turn_start': self.player_start_turn,
+            'player_turn_choice': self.player_action,
+            'player_turn_end': self.player_end_turn,
+            'enemy_turn': self.ai_action
+        }
+
+    def change_state(self, new_state):
+        self.previous_state = self.corrent_state
+        self.corrent_state = new_state
+        self.states[new_state]()
+
     def active_battle(self):
         if not game_state.state['battle']:
             return
@@ -16,57 +31,42 @@ class BattleSystem():
             return
         
         if self.turn_is_finished:
+            self.change_state('player_turn_start')
             print(game_objects.pc.conditions)
-            self.start_player_turn()
+            #self.start_player_turn()
             self.player_action()
-            
-        """
-        self.start_player_turn()
-        print(self.isPlayerturn)
-        print('новый ход')
-        print(f'состояния до обновления: {game_objects.pc.conditions}')
+    
+    def player_start_turn(self):
+        self.isPlayerturn = True
+        self.turn_is_finished = False
         self.refresh_conditions_counters(game_objects.pc)
-        print(f'состояния после обновления: {game_objects.pc.conditions}')
-        self.player_action()                
-        print(f'состояния до обновления: {game_state.enemy_id.conditions}')
-        self.refresh_conditions_counters(game_state.enemy_id)
-        print(f'состояния после обновления: {game_state.enemy_id.conditions}')
-        if self.isPlayerturn == False:
-            self.ai_action()
-                    
-            self.repite_active_battle = main_window.main_window.after(30, self.active_battle)
-        else:
-            main_window.main_window.after_cancel(self.repite_active_battle)
-        """
+        game_objects.pc.apply_condition_start_turn()
+        self.change_state('player_turn_choice')
+
     def register_choice_callback(self, callback):
         self.on_player_choice_callback = callback
     
     def on_player_choice(self, action):
+        if hasattr(self, 'ref_cursor'):
+            main_window.main_window.after_cancel(self.ref_cursor)
+        
+        self.change_state('player_turn_end')
+    
+    def player_end_turn(self):
         self.isPlayerturn = False
         game_objects.pc.apply_condition_end_turn()
         print('я тут')
         print(game_objects.pc.conditions['defending'])
         print(game_objects.pc.phy_res)
-
-        if hasattr(self, 'ref_cursor'):
-            main_window.main_window.after_cancel(self.ref_cursor)
-        self.ai_action()
+        self.change_state('enemy_turn')
 
     def refresh_conditions_counters(self, target):
         for i in target.conditions:
             if target.conditions[i] != 0:
                 target.conditions[i] = target.conditions[i] - 1
-    
-    def start_player_turn(self):
-        self.isPlayerturn = True
-        self.turn_is_finished = False
-
 
 
     def player_action(self):
-        self.isPlayerturn = True
-        game_objects.pc.apply_condition_start_turn()
-        print('применил состояние в начале хода')
 
         def refresh_cursor():
             battle.cursor.move_cursor()
@@ -82,6 +82,7 @@ class BattleSystem():
         refresh_cursor()
 
     def ai_action(self):
+        self.refresh_conditions_counters(game_state.enemy_id)
         game_state.enemy_id.apply_condition_start_turn()
         ai_choice = random.choice(game_state.enemy_id.list_of_actions)
         if ai_choice == 'attack':
@@ -93,6 +94,7 @@ class BattleSystem():
         game_state.enemy_id.apply_condition_end_turn()
         print('here')
         self.turn_is_finished = True
+        self.active_battle()
 
 battle_system = BattleSystem()
 battle.cursor.set_choice_callback(battle_system.on_player_choice)

@@ -71,7 +71,8 @@ def delete_object(obj_id):
 def start_battle(obj_id):
     game_state.change_to_battle(obj_id)
     battle.draw_hp_bars()
-    main_window.main_window.after(300, battle_system.active_battle) 
+    #main_window.main_window.after(300, battle_system.active_battle)
+    battle_system.active_battle()
 
 def can_move(dx, dy)->bool:
     list_of_overlaps = get_list_of_overlaps(dx, dy)
