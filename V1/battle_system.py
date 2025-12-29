@@ -88,9 +88,13 @@ class BattleSystem():
         if ai_choice == 'attack':
             game_state.enemy_id.make_attack(game_objects.pc)
             print(game_state.enemy_id.name, f'attacks')
+            
+            #main_window.add_battle_log(f'{game_state.enemy_id.name,} attacks')
+            #main_window.battle_log.insert('end',f'{game_state.enemy_id.name,} attacks')
         if ai_choice == 'heal':
             game_state.enemy_id.heal(game_objects.pc)
             print(game_state.enemy_id.name, f'heal')
+            #main_window.add_battle_log(f'{game_state.enemy_id.name,} heals')
         game_state.enemy_id.apply_condition_end_turn()
         print('here')
         self.turn_is_finished = True
