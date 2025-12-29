@@ -1,6 +1,6 @@
 import tkinter
 from game_window import main_window 
-from keys import list_of_keys
+import keys 
 from game_state_control import game_state
 import game_objects
 import battle
@@ -87,16 +87,20 @@ def can_move(dx, dy)->bool:
 def move_pc():
     dx, dy = 0, 0
     
-    if list_of_keys['w']:
+    if keys.list_of_keys['w']:
         dy -= 2
-    if list_of_keys['s']:
+    if keys.list_of_keys['s']:
         dy += 2
-    if list_of_keys['a']:
+    if keys.list_of_keys['a']:
         dx -= 2
-    if list_of_keys['d']:
+    if keys.list_of_keys['d']:
         dx += 2
-    if list_of_keys['u']:
+    if keys.list_of_keys['u']:
         print(game_objects.enemy_dict)
+    if keys.key_tapped['i']:
+        game_state.change_to_inventory()
+        keys.reset_input_flags()
+        
 
     if (dx != 0 or dy != 0) and can_move(dx, dy):
         main_window.map_canvas.move('character', dx, dy)

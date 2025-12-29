@@ -5,6 +5,7 @@ import keys
 from game_state_control import game_state #сейчас для теста/ или нет
 import battle 
 from battle_system import battle_system
+import inventory
 
 refresh_rate = 16
 
@@ -22,6 +23,11 @@ def refresh_battle():
         battle.exit_battle()
     main_window.main_window.after(refresh_rate, refresh_battle) #временно для теста
 
+def refresh_inventory():
+    if game_state.state['inventory']:
+        inventory.exit_inventory()
+    main_window.main_window.after(refresh_rate, refresh_inventory)
+
 
 
 def main():
@@ -32,7 +38,7 @@ def main():
     battle.draw_battle_options()
     
     refresh_battle() #временно для теста
-    
+    refresh_inventory()
     
     main_window.main_window.bind("<KeyPress>", keys.key_pressed)
     main_window.main_window.bind("<KeyRelease>", keys.key_released)
