@@ -36,6 +36,10 @@ def spawn_enemy_by_sprite(sprite, type:str, obj_id:str):
     game_objects.enemy_dict[sprite] = obj_name
     return obj_name
 
+def draw_items():
+    game_objects.potion1.spawn(50, 30)
+    game_objects.potion2.spawn(50, 50)
+
 def draw_characters():
     playerY = 30
     playerX = 30
@@ -68,6 +72,10 @@ def delete_object(obj_id):
     del game_objects.enemy_dict[obj_id] #удаляет из словаря объектов
     main_window.map_canvas.delete(obj_id) #удаляет с карты
 
+def delete_item(obj_id):
+    del game_objects.item_dict[obj_id]
+    main_window.map_canvas.delete(obj_id)
+
 def start_battle(obj_id):
     game_state.change_to_battle(obj_id)
     battle.draw_hp_bars()
@@ -78,6 +86,12 @@ def can_move(dx, dy)->bool:
     list_of_overlaps = get_list_of_overlaps(dx, dy)
     if 'wall' in list_of_overlaps:
         return False
+    if 'item' in list_of_overlaps:
+        #print(list_of_overlaps['item'][0])
+        #print(game_objects.item_dict)
+        #print(game_objects.item_dict[list_of_overlaps['item'][0]])
+        game_objects.item_dict[list_of_overlaps['item'][0]].pick_up()
+        delete_item(list_of_overlaps['item'][0])        
     if 'enemy' in list_of_overlaps:
         start_battle(game_objects.enemy_dict[list_of_overlaps['enemy'][0]]) #задел на переход в бой
         delete_object(list_of_overlaps['enemy'][0])

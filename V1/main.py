@@ -8,6 +8,7 @@ from battle_system import battle_system
 import inventory
 
 refresh_rate = 16
+inv_cursor = inventory.Cursor()
 
 def refresh_map():
     if game_state.state['map']:
@@ -25,7 +26,10 @@ def refresh_battle():
 
 def refresh_inventory():
     if game_state.state['inventory']:
+        main_window.inventory_canvas.tag_raise('cursor', 'inv_bg')
         inventory.exit_inventory()
+        inv_cursor.move_cursor()
+        inv_cursor.use_item()
     main_window.main_window.after(refresh_rate, refresh_inventory)
 
 
@@ -33,9 +37,11 @@ def refresh_inventory():
 def main():
     game_map.draw_map()
     game_map.draw_characters()
+    game_map.draw_items()
     refresh_map()
     battle.draw_icons()
     battle.draw_battle_options()
+    inventory.draw_inventory()
     
     refresh_battle() #временно для теста
     refresh_inventory()
