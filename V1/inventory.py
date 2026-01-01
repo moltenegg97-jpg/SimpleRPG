@@ -68,7 +68,7 @@ class Cursor():
             print(obj_id)
             if obj_id in game_objects.item_dict:
                 print(game_objects.item_dict[obj_id])
-                game_objects.item_dict[obj_id].drink()
+                game_objects.item_dict[obj_id].use()
                 del game_objects.item_dict[obj_id]
                 if game_state.previous_state == 'battle':
                     if self.choice_callback:

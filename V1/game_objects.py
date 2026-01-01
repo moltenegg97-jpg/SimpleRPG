@@ -61,11 +61,12 @@ class Item:
         self.sprite = None
         self.sprite_size = 5
         self.sprite_color = 'orange'
-        self.heal_power = 15
+        
     def spawn(self, x, y):
         self.sprite = main_window.map_canvas.create_rectangle(x, y, x+self.sprite_size, y+self.sprite_size, fill=self.sprite_color, outline='black', tags='item')
         item_dict[self.sprite] = self
         print(self.sprite)
+
     def pick_up(self):
         print(self.sprite, self.sprite_size)
         inventory_size = self.sprite_size * 3
@@ -81,18 +82,35 @@ class Item:
                     y1 = y+inventory_size
                     self.inventory_sprite = main_window.inventory_canvas.create_rectangle(x, y, x1, y1, fill=self.sprite_color, outline="black")
                     return
+
+    def delete_sprite_from_inv(self):
+        main_window.inventory_canvas.delete(self.inventory_sprite)
+    
+    def use(self):
+        print('do nothing')
+        pass
+
+
+class Potion(Item):
+    def __init__(self, name, id):
+        super().__init__(name, id)
+        self.heal_power = 15
+
+    def use(self):
+        self.drink()
+
     def drink(self):
         hp_before = pc.hp
         pc.hp = min(pc.hp+self.heal_power, pc.max_hp)
         d_hp = pc.hp - hp_before
-        main_window.inventory_canvas.delete(self.inventory_sprite)
+        self.delete_sprite_from_inv()
         main_window.add_battle_log(f'{pc.name} использовал {self.name} и вылечил {d_hp}')
 
 
 pc = PlayerCharacter('pc', hp=80, atk=15)
 goblin1 = Goblin('1')
-potion1 = Item('potion', 1)
-potion2 = Item('potion', 2)
+potion1 = Potion('potion', 1)
+potion2 = Potion('potion', 2)
 
 if __name__ == '__main__':
     print(goblin1.hp)
