@@ -39,6 +39,7 @@ def spawn_enemy_by_sprite(sprite, type:str, obj_id:str):
 def draw_items():
     game_objects.potion1.spawn(50, 30)
     game_objects.potion2.spawn(50, 50)
+    game_objects.sword.spawn(25, 40)
 
 def draw_characters():
     playerY = 30

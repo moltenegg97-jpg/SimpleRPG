@@ -61,6 +61,7 @@ class Item:
         self.sprite = None
         self.sprite_size = 5
         self.sprite_color = 'orange'
+        self.consumable = False
         
     def spawn(self, x, y):
         self.sprite = main_window.map_canvas.create_rectangle(x, y, x+self.sprite_size, y+self.sprite_size, fill=self.sprite_color, outline='black', tags='item')
@@ -83,9 +84,35 @@ class Item:
                     self.inventory_sprite = main_window.inventory_canvas.create_rectangle(x, y, x1, y1, fill=self.sprite_color, outline="black")
                     return
 
+    def equip(self):
+        inventory_size = self.sprite_size * 3
+        border = 8
+        if inventory.layout[0][0] == 1:
+            inventory.layout[0][0] = self.sprite
+            x = border+0*inventory.tile_size
+            y = border+0*inventory.tile_size
+            x1 = x+inventory_size
+            y1 = y+inventory_size
+            clone_fill = main_window.inventory_canvas.itemcget(self.inventory_sprite, 'fill')
+            clone_outline = main_window.inventory_canvas.itemcget(self.inventory_sprite, 'outline')
+            self.equip_sprite = main_window.inventory_canvas.create_rectangle(x, y, x1, y1, fill=clone_fill, outline=clone_outline)
+            self.on_equip()
+
     def delete_sprite_from_inv(self):
         main_window.inventory_canvas.delete(self.inventory_sprite)
+
+    def de_equip(self):
+        if inventory.layout[0][0] != 1:
+            inventory.layout[0][0] = 1
+            main_window.inventory_canvas.delete(self.equip_sprite)
+            self.on_de_equip()
     
+    def on_de_equip(self):
+        pass
+    
+    def on_equip(self):
+        pass
+
     def use(self):
         print('do nothing')
         pass
@@ -95,6 +122,7 @@ class Potion(Item):
     def __init__(self, name, id):
         super().__init__(name, id)
         self.heal_power = 15
+        self.consumable = True
 
     def use(self):
         self.drink()
@@ -106,11 +134,27 @@ class Potion(Item):
         self.delete_sprite_from_inv()
         main_window.add_battle_log(f'{pc.name} использовал {self.name} и вылечил {d_hp}')
 
+class Weapon(Item):
+    def __init__(self, name, id):
+        super().__init__(name, id)
+        self.sprite_color = "#4EECD2"
+        self.weapon_power = 10
+    def use(self):
+        self.equip()
+        
+    def on_equip(self): 
+        pc.atk = pc.atk + self.weapon_power
+    
+    def on_de_equip(self):
+        pc.atk = pc.atk - self.weapon_power
+        
+
 
 pc = PlayerCharacter('pc', hp=80, atk=15)
 goblin1 = Goblin('1')
 potion1 = Potion('potion', 1)
 potion2 = Potion('potion', 2)
+sword = Weapon('sword', 1)
 
 if __name__ == '__main__':
     print(goblin1.hp)

@@ -66,10 +66,22 @@ class Cursor():
             print(self.cursor_pos_x, self.cursor_pos_y)
             obj_id = layout[self.cursor_pos_y][self.cursor_pos_x]
             print(obj_id)
+            if self.cursor_pos_y < 3:
+                if obj_id in game_objects.item_dict:
+                    print(game_objects.item_dict[obj_id])
+                    game_objects.item_dict[obj_id].de_equip()
+                    keys.reset_input_flags()
+                    if game_state.previous_state == 'battle':
+                        if self.choice_callback:
+                            self.choice_callback('inventory')
+                        game_state.back_from_inventory()
+                    return
+
             if obj_id in game_objects.item_dict:
                 print(game_objects.item_dict[obj_id])
                 game_objects.item_dict[obj_id].use()
-                del game_objects.item_dict[obj_id]
+                if game_objects.item_dict[obj_id].consumable:
+                    del game_objects.item_dict[obj_id]
                 if game_state.previous_state == 'battle':
                     if self.choice_callback:
                         self.choice_callback('inventory')
