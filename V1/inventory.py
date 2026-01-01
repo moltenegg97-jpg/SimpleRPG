@@ -2,7 +2,7 @@ import keys
 from game_state_control import game_state
 import tkinter
 from game_window import main_window
-
+import game_objects
 layout = [[1, 1],
           [1, 1],
           [1, 1],
@@ -33,7 +33,7 @@ class Cursor():
         self.cursor_jp_x = tile_size
         self.cursor_jp_y = tile_size
         cursor_diam = 5
-        self.cursor = main_window.inventory_canvas.create_rectangle(tile_size, tile_size, tile_size+tile_size, tile_size+tile_size, outline='red', tags='cursor')
+        self.cursor = main_window.inventory_canvas.create_rectangle(0*tile_size, 0*tile_size, 0*tile_size+tile_size, 0*tile_size+tile_size, outline='red', tags='cursor')
         self.choice_callback = None
 
     def set_choice_callback(self, callback):
@@ -63,9 +63,19 @@ class Cursor():
     def use_item(self) -> bool: #if true - turn ended
         if keys.key_tapped['Return']:
             print('key is pressed') #для теста, удалить позже
-            print(self.cursor_pos_x, self.cursor_pos_y) #для теста, удалить позже
-            #print(battle_option_table.get((self.cursor_pos_x, self.cursor_pos_y))) #для теста, удалить позже
-            print(main_window.battle_canvas.coords(self.cursor))
+            print(self.cursor_pos_x, self.cursor_pos_y)
+            obj_id = layout[self.cursor_pos_y][self.cursor_pos_x]
+            print(obj_id)
+            if obj_id in game_objects.item_dict:
+                print(game_objects.item_dict[obj_id])
+                game_objects.item_dict[obj_id].drink()
+                del game_objects.item_dict[obj_id]
+                if game_state.previous_state == 'battle':
+                    if self.choice_callback:
+                        self.choice_callback('inventory')
+                    game_state.back_from_inventory()
+            else:
+                print('cell is empty')
             keys.reset_input_flags()
             
         
@@ -76,3 +86,5 @@ def exit_inventory():
     if keys.key_tapped['i']:
         game_state.back_from_inventory()
         keys.reset_input_flags()
+
+inv_cursor = Cursor()

@@ -60,6 +60,7 @@ class Item:
         self.sprite = None
         self.sprite_size = 5
         self.sprite_color = 'orange'
+        self.heal_power = 15
     def spawn(self, x, y):
         self.sprite = main_window.map_canvas.create_rectangle(x, y, x+self.sprite_size, y+self.sprite_size, fill=self.sprite_color, outline='black', tags='item')
         item_dict[self.sprite] = self
@@ -68,7 +69,7 @@ class Item:
         print(self.sprite, self.sprite_size)
         inventory_size = self.sprite_size * 3
         border = 8
-
+    
         for i in range(len(inventory.layout)):
             for j in range(len(inventory.layout[i])):
                 if inventory.layout[i][j] == 0:
@@ -77,9 +78,14 @@ class Item:
                     y = border+i*inventory.tile_size
                     x1 = x+inventory_size
                     y1 = y+inventory_size
-                    inventory_sprite = main_window.inventory_canvas.create_rectangle(x, y, x1, y1, fill=self.sprite_color, outline="black")
+                    self.inventory_sprite = main_window.inventory_canvas.create_rectangle(x, y, x1, y1, fill=self.sprite_color, outline="black")
                     return
-
+    def drink(self):
+        hp_before = pc.hp
+        pc.hp = min(pc.hp+self.heal_power, pc.max_hp)
+        d_hp = pc.hp - hp_before
+        main_window.inventory_canvas.delete(self.inventory_sprite)
+        main_window.add_battle_log(f'{pc.name} использовал {self.name} и вылечил {d_hp}')
 
 
 pc = PlayerCharacter('pc', hp=80, atk=15)

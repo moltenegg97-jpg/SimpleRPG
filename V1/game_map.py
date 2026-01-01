@@ -73,7 +73,7 @@ def delete_object(obj_id):
     main_window.map_canvas.delete(obj_id) #удаляет с карты
 
 def delete_item(obj_id):
-    del game_objects.item_dict[obj_id]
+    #del game_objects.item_dict[obj_id]
     main_window.map_canvas.delete(obj_id)
 
 def start_battle(obj_id):
