@@ -10,22 +10,23 @@ class Character:
         self.list_of_actions = ['attack', 'heal']
         self.conditions = {'defending':0}
         self.phy_res = 0
+        self.id = ''
     def make_attack(self, target):
         damage_done = self.atk*(1-target.phy_res)
         target.hp = target.hp - damage_done
         if target.hp < 0:
             target.hp = 0
-        main_window.add_battle_log(f'{self.name,} attacks')
+        main_window.add_battle_log(f'{self.name+' '+self.id} attacks')
         main_window.add_battle_log(f'its done {damage_done} damage')
     def heal(self, target): #for test
         target.hp = target.hp + self.atk
         if target.hp > target.max_hp:
             target.hp = target.max_hp
-        main_window.add_battle_log(f'{self.name,} heals')
+        main_window.add_battle_log(f'{self.name} heals')
         main_window.add_battle_log(f'its heals {self.atk}')
     def defend(self):
         self.conditions['defending'] = 1
-        main_window.add_battle_log(f'{self.name,} is defending')
+        main_window.add_battle_log(f'{self.name} is defending')
     def apply_condition_start_turn(self):
         if self.conditions['defending'] == 0:
             self.phy_res = 0
