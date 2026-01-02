@@ -3,6 +3,7 @@ import game_objects
 from game_state_control import game_state
 import random
 from game_window import main_window
+import inventory
 
 class BattleSystem():
     def __init__(self):
@@ -69,8 +70,9 @@ class BattleSystem():
     def player_action(self):
 
         def refresh_cursor():
-            battle.cursor.move_cursor()
-            battle.cursor.pick_battle_option()
+            if game_state.state['battle']:
+                battle.cursor.move_cursor()
+                battle.cursor.pick_battle_option()
             self.ref_cursor = main_window.main_window.after(16, refresh_cursor)    
 
         if battle.cursor.pick_battle_option():
@@ -88,13 +90,10 @@ class BattleSystem():
         if ai_choice == 'attack':
             game_state.enemy_id.make_attack(game_objects.pc)
             print(game_state.enemy_id.name, f'attacks')
-            
-            #main_window.add_battle_log(f'{game_state.enemy_id.name,} attacks')
-            #main_window.battle_log.insert('end',f'{game_state.enemy_id.name,} attacks')
+
         if ai_choice == 'heal':
             game_state.enemy_id.heal(game_objects.pc)
             print(game_state.enemy_id.name, f'heal')
-            #main_window.add_battle_log(f'{game_state.enemy_id.name,} heals')
         game_state.enemy_id.apply_condition_end_turn()
         print('here')
         self.turn_is_finished = True
@@ -102,3 +101,4 @@ class BattleSystem():
 
 battle_system = BattleSystem()
 battle.cursor.set_choice_callback(battle_system.on_player_choice)
+inventory.inv_cursor.set_choice_callback(battle_system.on_player_choice)

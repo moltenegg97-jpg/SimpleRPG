@@ -1,10 +1,11 @@
 import tkinter
 from game_window import main_window 
-from keys import list_of_keys
+import keys 
 from game_state_control import game_state
 import game_objects
 import battle
 from battle_system import battle_system
+import effects
 
 #import game_window импортировать для теста из модуля
 
@@ -36,6 +37,11 @@ def spawn_enemy_by_sprite(sprite, type:str, obj_id:str):
     game_objects.enemy_dict[sprite] = obj_name
     return obj_name
 
+def draw_items():
+    game_objects.potion1.spawn(50, 30)
+    game_objects.potion2.spawn(50, 50)
+    game_objects.sword.spawn(25, 40)
+
 def draw_characters():
     playerY = 30
     playerX = 30
@@ -56,17 +62,21 @@ def get_list_of_overlaps(dx, dy)->dict:
     collision_y2 += dy
     overlaps_id: tuple = (main_window.map_canvas.find_overlapping(collision_x1, collision_y1, collision_x2, collision_y2))
 
-    for i in overlaps_id:            
-        #list_of_overlasps_tags.append(map_canvas.gettags(i)[0])
-        if main_window.map_canvas.gettags(i)[0] in list_of_overlaps:        
-            list_of_overlaps[main_window.map_canvas.gettags(i)[0]].append(i)
-        else:
-            list_of_overlaps[main_window.map_canvas.gettags(i)[0]] = [i]
+    for i in overlaps_id:       
+        if len(main_window.map_canvas.gettags(i))> 0:
+            if main_window.map_canvas.gettags(i)[0] in list_of_overlaps:        
+                list_of_overlaps[main_window.map_canvas.gettags(i)[0]].append(i)
+            else:
+                list_of_overlaps[main_window.map_canvas.gettags(i)[0]] = [i]
     return list_of_overlaps
 
 def delete_object(obj_id):
     del game_objects.enemy_dict[obj_id] #удаляет из словаря объектов
     main_window.map_canvas.delete(obj_id) #удаляет с карты
+
+def delete_item(obj_id):
+    #del game_objects.item_dict[obj_id]
+    main_window.map_canvas.delete(obj_id)
 
 def start_battle(obj_id):
     game_state.change_to_battle(obj_id)
@@ -78,6 +88,12 @@ def can_move(dx, dy)->bool:
     list_of_overlaps = get_list_of_overlaps(dx, dy)
     if 'wall' in list_of_overlaps:
         return False
+    if 'item' in list_of_overlaps:
+        #print(list_of_overlaps['item'][0])
+        #print(game_objects.item_dict)
+        #print(game_objects.item_dict[list_of_overlaps['item'][0]])
+        game_objects.item_dict[list_of_overlaps['item'][0]].pick_up()
+        delete_item(list_of_overlaps['item'][0])        
     if 'enemy' in list_of_overlaps:
         start_battle(game_objects.enemy_dict[list_of_overlaps['enemy'][0]]) #задел на переход в бой
         delete_object(list_of_overlaps['enemy'][0])
@@ -86,19 +102,26 @@ def can_move(dx, dy)->bool:
 
 def move_pc():
     dx, dy = 0, 0
-    
-    if list_of_keys['w']:
+    x, y = main_window.map_canvas.coords('character')[0], main_window.map_canvas.coords('character')[1]
+    if keys.list_of_keys['w']:
         dy -= 2
-    if list_of_keys['s']:
+    if keys.list_of_keys['s']:
         dy += 2
-    if list_of_keys['a']:
+    if keys.list_of_keys['a']:
         dx -= 2
-    if list_of_keys['d']:
+    if keys.list_of_keys['d']:
         dx += 2
-    if list_of_keys['u']:
+
+    if keys.list_of_keys['u']:
         print(game_objects.enemy_dict)
+    if keys.key_tapped['i']:
+        game_state.change_to_inventory()
+    keys.reset_input_flags()
+    
+        
 
     if (dx != 0 or dy != 0) and can_move(dx, dy):
+        effects.make_sparks(x, y, -dx, -dy, 1)
         main_window.map_canvas.move('character', dx, dy)
 
 if __name__ == '__main__':

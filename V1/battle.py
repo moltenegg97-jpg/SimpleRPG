@@ -125,6 +125,10 @@ class Cursor():
                     self.choice_callback(action)
                 print(game_objects.pc.conditions)
                 return True
+            if action == 'inventory':
+                game_state.change_to_inventory()
+                keys.reset_input_flags()
+                return True
         return False
 
 cursor = Cursor()
@@ -150,6 +154,7 @@ def draw_battle_options():
     atk_btn = BattleChoice('attack', 0, 0,)
     hl_btn = BattleChoice('heal', 0, 1)
     defend_btn = BattleChoice('defend', 1, 0)
+    inventory_btn = BattleChoice('inventory', 1, 1)
 
 
 def exit_battle():

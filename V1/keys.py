@@ -7,7 +7,8 @@ list_of_keys = {
     't': False, #для теста
     'y': False, #для теста
     'u': False, #для теста
-    'Return': False
+    'Return': False,
+    'i': False
 }
 
 #должен повторять list_of_keys
@@ -20,7 +21,8 @@ key_tapped = {
     't': False, #для теста
     'y': False, #для теста
     'u': False, #для теста
-    'Return': False
+    'Return': False,
+    'i':False
 }
 
 def reset_input_flags():
