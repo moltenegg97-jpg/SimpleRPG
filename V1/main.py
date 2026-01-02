@@ -7,6 +7,7 @@ import battle
 from battle_system import battle_system
 import inventory
 
+
 refresh_rate = 16
 
 

@@ -5,6 +5,7 @@ from game_state_control import game_state
 import game_objects
 import battle
 from battle_system import battle_system
+import effects
 
 #import game_window импортировать для теста из модуля
 
@@ -61,12 +62,12 @@ def get_list_of_overlaps(dx, dy)->dict:
     collision_y2 += dy
     overlaps_id: tuple = (main_window.map_canvas.find_overlapping(collision_x1, collision_y1, collision_x2, collision_y2))
 
-    for i in overlaps_id:            
-        #list_of_overlasps_tags.append(map_canvas.gettags(i)[0])
-        if main_window.map_canvas.gettags(i)[0] in list_of_overlaps:        
-            list_of_overlaps[main_window.map_canvas.gettags(i)[0]].append(i)
-        else:
-            list_of_overlaps[main_window.map_canvas.gettags(i)[0]] = [i]
+    for i in overlaps_id:       
+        if len(main_window.map_canvas.gettags(i))> 0:
+            if main_window.map_canvas.gettags(i)[0] in list_of_overlaps:        
+                list_of_overlaps[main_window.map_canvas.gettags(i)[0]].append(i)
+            else:
+                list_of_overlaps[main_window.map_canvas.gettags(i)[0]] = [i]
     return list_of_overlaps
 
 def delete_object(obj_id):
@@ -101,7 +102,7 @@ def can_move(dx, dy)->bool:
 
 def move_pc():
     dx, dy = 0, 0
-    
+    x, y = main_window.map_canvas.coords('character')[0], main_window.map_canvas.coords('character')[1]
     if keys.list_of_keys['w']:
         dy -= 2
     if keys.list_of_keys['s']:
@@ -110,14 +111,17 @@ def move_pc():
         dx -= 2
     if keys.list_of_keys['d']:
         dx += 2
+
     if keys.list_of_keys['u']:
         print(game_objects.enemy_dict)
     if keys.key_tapped['i']:
         game_state.change_to_inventory()
-        keys.reset_input_flags()
+    keys.reset_input_flags()
+    
         
 
     if (dx != 0 or dy != 0) and can_move(dx, dy):
+        effects.make_sparks(x, y, -dx, -dy, 1)
         main_window.map_canvas.move('character', dx, dy)
 
 if __name__ == '__main__':
